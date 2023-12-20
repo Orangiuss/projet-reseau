@@ -4,11 +4,6 @@
     apt:
       update_cache: yes
   
-  - name: 
-    apt:
-      name: kubadm
-      state: present
-  
   - name: Pull kubeadm config images pull
     shell: kubeadm config images pull
 
@@ -25,7 +20,7 @@
            kind: ClusterConfiguration
            apiVersion: kubeadm.k8s.io/v1beta3
            networking:
-             podSubnet: "10.244.0.0/16"
+             podSubnet: "10.226.132.0/28"
            ---
            kind: KubeletConfiguration
            apiVersion: kubelet.config.k8s.io/v1beta1
@@ -43,12 +38,10 @@
   - name: initialize the cluster (this could take some time)
     shell: kubeadm init --config /etc/kubernetes/kubeadm-config.yaml >> cluster_initialized.log
     args:
-      chdir: /home/ubuntu
+      chdir: /root 
       creates: cluster_initialized.log
 
   - name: create .kube directory
-    become: yes
-    become_user: ubuntu
     file:
       path: $HOME/.kube
       state: directory
@@ -56,14 +49,12 @@
 
   - name: copy admin.conf to user's kube config
     copy:
-      src: /etc/kubernetes/kubeadm-config.yaml
-      dest: /home/ubuntu/.kube/config
+      src: /etc/kubernetes/admin.conf
+      dest: /root/.kube/config
       remote_src: yes
-      owner: ubuntu
+      owner: root
 
   - name: install Pod network
-    become: yes
-    become_user: ubuntu
     shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.log
     args:
       chdir: $HOME

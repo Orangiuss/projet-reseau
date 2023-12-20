@@ -21,6 +21,12 @@
     #     - br01
     #     - br02
 
+    # - name: lxc profile copy default k8s
+    #   community.general.lxd_profile_copy:
+    #     name: k8s
+    #     copy_from: default
+    #     state: present
+
     - name: Create all LXD containers 
       community.general.lxd_container:
         name: "{{ item }}"
@@ -32,7 +38,7 @@
           server: https://images.linuxcontainers.org
           protocol: simplestreams
           alias: ubuntu/focal/amd64
-        profiles: ["default"]
+        profiles: ["k8s"]
         # wait_for_ipv4_addresses: true
       with_items: "{{ groups['lxd_containers'] }}"
 
