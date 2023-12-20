@@ -1,0 +1,43 @@
+---
+- name: Create Projet infrastructure LXD containers
+  hosts: localhost
+  tasks:
+    # - name: Delete bridge networks
+    #   command: brctl delbr "{{ item }}"
+    #   become: true
+    #   with_items:
+    #     - br01
+    #     - br02
+    # - name: Create bridge networks
+    #   command: brctl addbr "{{ item }}"
+    #   become: true
+    #   with_items:
+    #     - br01
+    #     - br02
+    # - name: ip link set dev br01 up
+    #   command: ip link set dev "{{ item }}" up
+    #   become: true
+    #   with_items:
+    #     - br01
+    #     - br02
+
+    - name: Create all LXD containers 
+      community.general.lxd_container:
+        name: "{{ item }}"
+        ignore_volatile_options: true
+        state: started
+        source:
+          type: image
+          mode: pull
+          server: https://images.linuxcontainers.org
+          protocol: simplestreams
+          alias: ubuntu/focal/amd64
+        profiles: ["default"]
+        # wait_for_ipv4_addresses: true
+      with_items: "{{ groups['lxd_containers'] }}"
+
+- name: Docker roles
+  hosts: lxd_containers
+  connection: lxd
+  roles:
+    - docker

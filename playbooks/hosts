@@ -1,0 +1,20 @@
+[all]
+mgr1
+worker1
+worker2
+
+[lxd_containers]
+mgr1
+worker1
+worker2
+
+[mgr]
+mgr1
+
+[worker]
+worker1
+worker2
+
+[lxd_containers:vars]
+ansible_connection: lxd
+ansible_user: root
