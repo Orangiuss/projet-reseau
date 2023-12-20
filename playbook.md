@@ -1,5 +1,7 @@
 # Installation
 
+Peut etre interessant : https://github.com/schu/kubedee
+
 https://medium.com/@selvamraju007/setting-up-k8s-cluster-using-lxc-lxd-58f0c288af3e
 https://medium.com/geekculture/a-step-by-step-demo-on-kubernetes-cluster-creation-f183823c0411
 
@@ -91,3 +93,27 @@ Nous allons donc créer les roles suivants :
 
 Après pas mal de soucis je me rends compte qu'il faut des profiles spéficique pour les noeuds du cluster Kubernetes. Je vais donc créer un profil spécifique pour le cluster Kubernetes. (Voir plus haut)
 
+https://medium.com/geekculture/a-step-by-step-demo-on-kubernetes-cluster-creation-f183823c0411
+
+Test :
+```bash
+echo 'KUBELET_EXTRA_ARGS="--fail-swap-on=false"' > /etc/default/kubeletsystemctl restart kubelet
+apt install -qq -y net-tools
+mknod /dev/kmsg c 1 11
+echo 'mknod /dev/kmsg c 1 11' >> /etc/rc.local
+chmod +x /etc/rc.local
+
+```
+Ca ne fonctionne pas, toujours erreur unable to load kernel module: "configs". 
+En mettant le flag --ignore-preflight-errors=all nous avons une erreur.
+
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+"exec-opts": ["native.cgroupdriver=systemd"],
+"log-driver": "json-file",
+"log-opts": {
+"max-size": "100m"
+},
+"storage-driver": "overlay2"
+}
+EOF
