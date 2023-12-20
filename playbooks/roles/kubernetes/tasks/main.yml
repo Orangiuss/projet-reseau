@@ -102,11 +102,13 @@
 
   - name: install Kubelet
     apt:
+      name: kubelet=1.28.*
       state: present
       update_cache: true
 
   - name: install Kubeadm
     apt:
+      name: kubeadm=1.28.*
       state: present
 
   - name: enable the Kubelet service, and enable it persistently
