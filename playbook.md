@@ -1,6 +1,6 @@
 # Installation
 
-Nous commencons par reprendre le playbook ansible de l'installation de 3 machines lxd
+Nous commencons par reprendre le playbook ansible de l'installation de 3 machines lxd. Puis nous allons faire l'installation du cluster Kubernetes.
 
 Nous ajoutons les roles suivants :
 
@@ -23,13 +23,29 @@ ansible-galaxy init --offline roles/kubernetes-node
 Nous ajoutons les roles dans le fichier `playbook.yml` :
 
 ```yaml
-- hosts: all
-  become: true
+- name: Docker/Kubernetes roles
+  hosts: lxd_containers
+  connection: lxd
   roles:
-    - lxd
-    - jenkins
     - docker
     - kubernetes
+
+- name: Kubernetes master roles
+  hosts: mgr
+  connection: lxd
+  roles:
     - kubernetes-master
+
+- name: Kubernetes worker roles
+  hosts: worker
+  connection: lxd
+  roles:
     - kubernetes-node
 ```
+
+Nous recuperons le playbook pour l'installation de Docker. (TP2)
+
+Pour Kubernetes nous allons nous appuyer sur plusieurs sources d'informations :
+https://github.com/torgeirl/kubernetes-playbooks/blob/master/playbooks/kube-dependencies.yml
+https://gist.github.com/allanger/84db2647578316f8e721f7219052788f
+https://github.com/torgeirl/kubernetes-playbooks

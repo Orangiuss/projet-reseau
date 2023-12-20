@@ -36,8 +36,21 @@
         # wait_for_ipv4_addresses: true
       with_items: "{{ groups['lxd_containers'] }}"
 
-- name: Docker roles
+- name: Docker/Kubernetes roles
   hosts: lxd_containers
   connection: lxd
   roles:
     - docker
+    - kubernetes
+
+- name: Kubernetes master roles
+  hosts: mgr
+  connection: lxd
+  roles:
+    - kubernetes-master
+
+- name: Kubernetes worker roles
+  hosts: worker
+  connection: lxd
+  roles:
+    - kubernetes-node

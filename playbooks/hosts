@@ -16,5 +16,5 @@ worker1
 worker2
 
 [lxd_containers:vars]
-ansible_connection: lxd
-ansible_user: root
+ansible_connection=lxd
+ansible_user=root
