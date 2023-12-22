@@ -117,3 +117,8 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 "storage-driver": "overlay2"
 }
 EOF
+
+Probleme de réseau :
+```bash
+for ipt in iptables iptables-legacy ip6tables ip6tables-legacy; do sudo $ipt --flush; sudo $ipt --flush -t nat; sudo $ipt --delete-chain; sudo $ipt --delete-chain -t nat; sudo $ipt -P FORWARD ACCEPT; sudo $ipt -P INPUT ACCEPT; sudo $ipt -P OUTPUT ACCEPT; done
+```

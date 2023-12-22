@@ -27,11 +27,12 @@
     #     copy_from: default
     #     state: present
 
-    - name: Create all LXD containers 
+    - name: Create all LXD virtual machines 
       community.general.lxd_container:
         name: "{{ item }}"
         ignore_volatile_options: true
         state: started
+        type: virtual-machine
         source:
           type: image
           mode: pull
@@ -60,3 +61,11 @@
   connection: lxd
   roles:
     - kubernetes-node
+
+- name: Add nodes to Kubernetes cluster
+  hosts: mgr
+  connection: lxd
+  tasks:
+    - name: Add nodes to Kubernetes cluster
+      shell: kubectl label node "{{ item }}" node-role.kubernetes.io/worker=worker
+      with_items: "{{ groups['worker'] }}"
