@@ -8,12 +8,18 @@
       packages:
         - fontconfig
         - openjdk-17-jre
+        - wget
+        - gnupg
   - name: Add Jenkins key
     shell: wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
   
   - name: Add Jenkins repository
-    shell: deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+    shell: echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null"
   
+  - name: Update APT packages
+    apt:
+      update_cache: yes
+
   - name: Install Jenkins
     apt:
       name: jenkins
