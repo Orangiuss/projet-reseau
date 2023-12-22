@@ -41,7 +41,7 @@
           alias: ubuntu/focal/amd64
         profiles: ["k8s"]
         # wait_for_ipv4_addresses: true
-      with_items: "{{ groups['lxd_containers'] }}"
+      with_items: "{{ groups['all'] }}"
 
 - name: Docker/Kubernetes roles
   hosts: lxd_containers
@@ -69,3 +69,9 @@
     - name: Add nodes to Kubernetes cluster
       shell: kubectl label node "{{ item }}" node-role.kubernetes.io/worker=worker
       with_items: "{{ groups['worker'] }}"
+
+- name: Deploy Jenkins
+  hosts: jenkins
+  connection: lxd
+  roles:
+    - jenkins

@@ -2,6 +2,7 @@
 mgr1
 worker1
 worker2
+jenkins
 
 [lxd_containers]
 mgr1
@@ -15,6 +16,13 @@ mgr1
 worker1
 worker2
 
+[jenkins]
+jenkins
+
 [lxd_containers:vars]
+ansible_connection=lxd
+ansible_user=root
+
+[jenkins:vars]
 ansible_connection=lxd
 ansible_user=root
