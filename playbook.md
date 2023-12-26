@@ -34,6 +34,12 @@ name: k8s
 used_by: []
 ```
 
+Nous pouvons le créer comme ceci :
+```bash
+lxc profile copy default k8s
+lxc profile edit k8s
+```
+
 
 Nous commencons par reprendre le playbook ansible de l'installation de 3 machines lxd. Puis nous allons faire l'installation du cluster Kubernetes.
 
