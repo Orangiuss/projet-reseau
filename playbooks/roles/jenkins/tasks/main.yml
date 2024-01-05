@@ -14,11 +14,10 @@
     shell: wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
   
   - name: Add Jenkins repository
-    shell: echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null"
+    shell: echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" >> /etc/apt/sources.list.d/jenkins.list
   
-  - name: Update APT packages
-    apt:
-      update_cache: yes
+  - name: Update APT-get cache
+    shell: apt-get update
 
   - name: Install Jenkins
     apt:

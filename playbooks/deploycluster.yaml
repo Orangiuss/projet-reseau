@@ -73,5 +73,6 @@
 - name: Deploy Jenkins
   hosts: jenkins
   connection: lxd
+  become: true
   roles:
     - jenkins
