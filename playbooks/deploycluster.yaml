@@ -76,10 +76,3 @@
   become: true
   roles:
     - jenkins
-
-- name: Registry roles
-  hosts: registry
-  connection: lxd
-  become: true
-  roles:
-    - registry

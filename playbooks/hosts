@@ -3,7 +3,6 @@ mgr1
 worker1
 worker2
 jenkins
-registry
 
 [k8s]
 mgr1
