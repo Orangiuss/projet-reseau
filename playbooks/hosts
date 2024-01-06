@@ -3,8 +3,9 @@ mgr1
 worker1
 worker2
 jenkins
+registry
 
-[lxd_containers]
+[k8s]
 mgr1
 worker1
 worker2
@@ -16,13 +17,10 @@ mgr1
 worker1
 worker2
 
-[jenkins]
-jenkins
-
-[lxd_containers:vars]
+[all:vars]
 ansible_connection=lxd
 ansible_user=root
 
-[jenkins:vars]
+[k8s:vars]
 ansible_connection=lxd
 ansible_user=root
