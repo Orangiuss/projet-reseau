@@ -50,6 +50,7 @@ Nous ajoutons les roles suivants :
 - kubernetes
 - kubernetes-master
 - kubernetes-node
+- registry
 
 Pour cela voici les commandes à executer :
 
@@ -59,6 +60,8 @@ ansible-galaxy init --offline roles/docker
 ansible-galaxy init --offline roles/kubernetes
 ansible-galaxy init --offline roles/kubernetes-master
 ansible-galaxy init --offline roles/kubernetes-node
+ansible-galaxy init --offline roles/registry
+```
 ```
 
 Nous ajoutons les roles dans le fichier `playbook.yml` :

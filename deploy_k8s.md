@@ -101,3 +101,7 @@ spec:
             path: /root/setup.sql
 ```
 Nous avons des services et des deployments pour Apache et MySQL.
+
+Nous avons les informations suivantes :
+
+Jenkins : http://10.226.132.118:8080/
