@@ -1,0 +1,12 @@
+---
+- name: Suppresion cluster
+  hosts: localhost
+  tasks:
+    - name: Destroy a container
+      community.general.lxd_container:
+        name: '{{ item }}'
+        state: absent
+        type: virtual-machine
+      with_items: "{{ groups['all'] }}"
+
+...
