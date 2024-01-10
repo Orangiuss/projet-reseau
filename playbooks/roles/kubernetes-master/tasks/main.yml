@@ -68,7 +68,7 @@
     set_fact:
       join_command: "{{ join_command_raw.stdout_lines[0] }}"
 
-  - name: mkdir /deploy
+  - name: mkdir /deploy_k8s
     file:
       path: /deploy_k8s
       state: directory
@@ -83,3 +83,26 @@
     template:
       src: mysql_deploy.yaml
       dest: /deploy_k8s/mysql_deploy.yaml
+
+  - name: Template volumes_mysql.yaml
+    template:
+      src: volumes_mysql.yaml
+      dest: /deploy_k8s/volumes_mysql.yaml
+    
+  # - name: Deploy volumes_mysql.yaml
+  #   shell: kubectl apply -f /deploy_k8s/volumes_mysql.yaml >> volumes_mysql.log
+  #   args:
+  #     chdir: /deploy_k8s
+  #     creates: volumes_mysql.log
+  
+  # - name: Deploy mysql_deploy.yaml
+  #   shell: kubectl apply -f /deploy_k8s/mysql_deploy.yaml >> mysql_deploy.log
+  #   args:
+  #     chdir: /deploy_k8s
+  #     creates: mysql_deploy.log
+  
+  # - name: Deploy app_deploy.yaml
+  #   shell: kubectl apply -f /deploy_k8s/app_deploy.yaml >> app_deploy.log
+  #   args:
+  #     chdir: /deploy_k8s
+  #     creates: app_deploy.log
