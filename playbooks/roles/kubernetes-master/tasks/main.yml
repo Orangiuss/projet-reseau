@@ -67,3 +67,19 @@
   - name: set join command
     set_fact:
       join_command: "{{ join_command_raw.stdout_lines[0] }}"
+
+  - name: mkdir /deploy
+    file:
+      path: /deploy_k8s
+      state: directory
+      mode: 0755
+
+  - name: Template app_deploy.yaml
+    template:
+      src: app_deploy.yaml
+      dest: /deploy_k8s/app_deploy.yaml
+  
+  - name: Template mysql_deploy.yaml
+    template:
+      src: mysql_deploy.yaml
+      dest: /deploy_k8s/mysql_deploy.yaml
