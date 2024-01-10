@@ -40,7 +40,7 @@
           protocol: simplestreams
           alias: ubuntu/focal/amd64
         profiles: ["k8s"]
-        # wait_for_ipv4_addresses: true
+        wait_for_ipv4_addresses: true
       with_items: "{{ groups['all'] }}"
 
 - name: Docker/Kubernetes roles
