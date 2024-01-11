@@ -39,7 +39,10 @@
           server: https://images.linuxcontainers.org
           protocol: simplestreams
           alias: ubuntu/focal/amd64
-        profiles: ["k8s"]
+        config:
+          limits.cpu: "2"
+          limits.memory: 2GB
+        profiles: ["default"]
         wait_for_ipv4_addresses: true
       with_items: "{{ groups['all'] }}"
 
@@ -76,3 +79,8 @@
   become: true
   roles:
     - jenkins
+
+- name: Deploiement registre local
+  hosts: mgr1
+  roles:
+    - registry

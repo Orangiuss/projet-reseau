@@ -8,5 +8,5 @@
         state: absent
         type: virtual-machine
       with_items: "{{ groups['all'] }}"
-
+#https://www.youtube.com/watch?v=xYk6qCyXOY4
 ...

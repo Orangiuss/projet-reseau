@@ -144,3 +144,4 @@
 
   - name: reboot and wait for reboot to complete
     reboot:
+      reboot_timeout: 60

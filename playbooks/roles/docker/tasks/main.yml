@@ -9,7 +9,6 @@
         - containerd
         - runc
       state: absent
-    become: true
 
   - name: Install Docker depedencies on the container
     ansible.builtin.apt:
@@ -21,7 +20,6 @@
         - nfs-common
       state: latest
       update_cache: true
-    become: true
 
   - name: Add Docker GPG apt Key
     apt_key:
