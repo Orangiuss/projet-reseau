@@ -76,3 +76,5 @@
   become: true
   roles:
     - jenkins
+    - docker
+    
