@@ -75,6 +75,5 @@
   connection: lxd
   become: true
   roles:
-    - jenkins
     - docker
-    
+    - jenkins

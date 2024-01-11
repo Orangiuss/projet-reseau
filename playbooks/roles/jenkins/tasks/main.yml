@@ -24,3 +24,6 @@
     apt:
       name: jenkins
       state: present
+  
+  - name: Add jenkins user to docker group
+    shell: usermod -aG docker jenkins
