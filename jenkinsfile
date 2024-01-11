@@ -55,6 +55,14 @@ pipeline {
             }
         }
         
-       
+        stage('Deploy to Kubernetes with playbook') {
+            steps {
+                script {
+                    sh 'ansible-playbook /deploy_k8s/playbook.yaml'
+                    // Ici on peut mettre sh 'kubectl apply -f /deploy_k8s/deployment.yaml' possiblement aussi
+                }
+            }
+        }
+
     }
 }
