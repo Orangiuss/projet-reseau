@@ -1,0 +1,6 @@
+---
+- name: Kubernetes master roles
+  hosts: mgr
+  connection: lxd
+  roles:
+    - deploy

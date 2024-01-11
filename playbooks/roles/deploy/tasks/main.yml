@@ -38,6 +38,3 @@
     args:
       chdir: /deploy_k8s
       creates: app_deploy.log
-
-  - name: Deploy init.sql
-    shell: kubectl exec -i pod/mysql-5c955b7d57-fnlpr -- mysql -u admin -p <NOM_DU_MOT_DE_PASSE> < /chemin/vers/init.sql
