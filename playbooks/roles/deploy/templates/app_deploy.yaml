@@ -30,6 +30,6 @@ spec:
       #   kubernetes.io/hostname: worker1
       containers:
       - name: nginx
-        image: nginx:latest
+        image: orangius/test_app:latest
         ports:
         - containerPort: 80
