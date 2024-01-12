@@ -109,15 +109,15 @@
 #   roles:
 #     - docker
 #     - jenkins
+- name: Deploiement registre local
+  hosts: mgr
+  roles:
+    - registry
+
 - name: Deploy Jenkins
   hosts: mgr
   connection: lxd
   become: true
   roles:
     - jenkins
-#    - deploy
-
-- name: Deploiement registre local
-  hosts: mgr1
-  roles:
-    - registry
+    - deploy

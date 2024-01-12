@@ -40,7 +40,9 @@
       organization_name: M2_SSI
       organizational_unit_name: TP_Protocoles_Réseaux
       common_name: "registry"
-      subject_alt_name: "IP:{{ ansible_default_ipv4.address }}"
+      #subject_alt_name: "IP:{{ ansible_default_ipv4.address }}"
+      #subject_alt_name: "DNS:registry"
+      subject_alt_name: "IP:10.211.55.250"
       email_address: mon.serveur@gmail.com
       basic_constraints_critical: true
       basicConstraints:
