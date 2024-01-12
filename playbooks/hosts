@@ -1,20 +1,22 @@
-[all]
-mgr1
-worker1
-worker2
-jenkins
+[all:children]
+mgr
+worker
+jenkinsg
 
-[k8s]
-mgr1
-worker1
-worker2
+[k8s:children]
+mgr
+worker
 
 [mgr]
-mgr1
+mgr1 repertoire_certificat=/root/docker/ssl/ autorite_personnelle_cle_prive=autorite.key autorite_personnelle_certificat=autorite.crt
+
 
 [worker]
 worker1
 worker2
+
+[jenkinsg]
+jenkins
 
 [all:vars]
 ansible_connection=lxd

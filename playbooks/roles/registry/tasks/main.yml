@@ -1,34 +1,68 @@
 ---
-# tasks file for roles/registry
-  - name: debug
-    debug:
-      var: ansible_default_ipv4.address
+  - name: Include task list in play only if the condition is true
+    include_tasks: certificat.yml
 
-  - name: Copier daemon.json
-    ansible.builtin.template:
-      src: daemon.json.j2
-      dest: /etc/docker/daemon.json
-  
-  - name: Relancer Service Docker
-    ansible.builtin.service:
-      name: docker
-      state: reloaded
-  
-  - name: Deploiement d'un registre docker
-    community.docker.docker_container:
-      name: registry
-      image: registry:2
-      state: started
-      recreate: false
-      restart: false
-      detach: true
-      restart_policy: "always"
-      ports:
-        - "5000:5000"
-  
   - name: Install du module kubernetes.core.k8s
     pip:
       name: kubernetes
+  
+  - name: copie fichier création de volume persistant
+    ansible.builtin.copy:
+      src: registre-volume.yml
+      dest: ~/registre-volume.yml
+      owner: root
+      group: root
+      mode: '0644'
+
+
+  - name: copie fichier de déploiement du registre local
+    template:
+      src: deploiement-registry.yml.j2
+      dest: ~/deploiement-registry.yml
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+  # kubectl create -f registre-volume.yml
+
+  # kubectl create secret tls registry-cert --cert=/root/docker/ssl/registry.crt --key=/root/docker/ssl/registry.key -n default
+  - name: creation d'un secret kubernetes
+    kubernetes.core.k8s:
+      state: present
+      definition: 
+        apiVersion: v1
+        kind: Secret
+        #type: tls       
+        metadata:
+          name: "cert-registre"
+          namespace: "default"
+        type: kubernetes.io/tls
+        data:
+          cert: "{{ lookup('file', repertoire_certificat + 'registry.crt') | b64encode | string }}"
+          key: "{{ lookup('file', repertoire_certificat + 'registry.key') | b64encode | string }}"
+          # cert: "{{ repertoire_certificat + 'registry.crt'| b64encode }}"
+          # key: "{{ repertoire_certificat + 'registry.key'| b64encode }}"
+
+
+# tasks file for roles/registry
+  # - name: ipv4 manager
+  #   debug:
+  #     var: ansible_default_ipv4.address
+
+  # - name: Deploiement d'un registre docker
+  #   community.docker.docker_container:
+  #     name: registry
+  #     image: registry:2
+  #     state: started
+  #     recreate: false
+  #     restart: false
+  #     detach: true
+  #     restart_policy: "always"
+  #     ports:
+  #       - "5000:5000"
+  
+  # - name: Install du module kubernetes.core.k8s
+  #   pip:
+  #     name: kubernetes
   
   # commande:kubectl create secret docker-registry reg-secret \
   # --docker-server=localhost:5000 \
@@ -37,27 +71,27 @@
   # --docker-email=VOTRE_EMAIL
   # ou
   # commande:kubectl create secret docker-registry docker-hub-sec --docker-username=VOTRE_UTILISATEUR --docker-password=VOTRE_MOT_DE_PASSE
-  - name: creation d'un secret kubernetes
-    kubernetes.core.k8s:
-      state: present
-      definition: 
-        apiVersion: v1
-        kind: Secret
-        # type: Opaque       
-        metadata:
-          name: "docker-hub-sec"
-          namespace: "default"
-        # type: kubernetes.io/dockerconfigjson
-        data:
-          password: password
-          username: test
+  # - name: creation d'un secret kubernetes
+  #   kubernetes.core.k8s:
+  #     state: present
+  #     definition: 
+  #       apiVersion: v1
+  #       kind: Secret
+  #       # type: Opaque       
+  #       metadata:
+  #         name: "docker-hub-sec"
+  #         namespace: "default"
+  #       # type: kubernetes.io/dockerconfigjson
+  #       data:
+  #         password: password
+  #         username: test
           #config_data.json: "lookup('pipe', 'echo -n {\"auths\":{\"localhost:5000\":{\"test\":\"' + VOTRE_UTILISATEUR + '\",\"test\":\"' + VOTRE_MOT_DE_PASSE + '\",\"email\":\"' + VOTRE_EMAIL + '\"}}}') | b64encode }}"
 #https://stackoverflow.com/questions/59203583/how-can-i-create-a-kubernetes-secret-with-ansible
 ...
 # commandes a faire après:
 # docker pull nginx
-# docker tag nginx 10.164.246.248:5000/nginx
-# docker push 10.164.246.248:5000/nginx
+# docker tag nginx 10.164.246.206:5000/nginx
+# docker push 10.164.246.206:5000/nginx
 # apt install nano
 # nano testpod.yml
 
@@ -72,7 +106,7 @@
 # spec:
 #   containers:
 #   - name: mon-conteneur
-#     image: 10.164.246.248:5000/nginx
+#     image: 10.164.246.206:5000/nginx
 #   imagePullSecrets:
 #   - name: docker-hub-sec
 
@@ -82,19 +116,21 @@
 # metadata:
 #   name: mon-deploiement
 #   namespace: default
-# spec:
-#   replicas: 3
-#   selector:
-#     matchLabels:
-#       app: mon-app
-#   template:
-#     metadata:
-#       labels:
-#         app: mon-app
-#     spec:
+#       - name: mon-conteneur
+#         image: 10.164.246.206:5000/nginx
+#       imagePullSecrets:
+#       - name: docker-hub-sec
+
+# pour afficher infos : kubectl describe pods -n default
+# erreur : https://stackoverflow.com/questions/59844553/kubernetes-failed-to-pull-image-server-gave-http-response-to-https-client
+# kubectl apply -f testpod.yaml
+# pour afficher les pods ainsi que leur node:
+# kubectl get pods -o wide
+# pour supprimer les pods:
+# kubectl delete pods --all
 #       containers:
 #       - name: mon-conteneur
-#         image: 10.164.246.248:5000/nginx
+#         image: 10.164.246.206:5000/nginx
 #       imagePullSecrets:
 #       - name: docker-hub-sec
 

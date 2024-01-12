@@ -51,6 +51,7 @@
   connection: lxd
   roles:
     - docker
+    - config-docker
     - kubernetes
 
 - name: Kubernetes master roles

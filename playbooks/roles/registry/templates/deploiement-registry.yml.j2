@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: registry
+  name: registry
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: registry
+  template:
+    metadata:
+      labels:
+        run: registry
+    spec:
+      nodeSelector:
+        node-type: worker
+      containers:
+      - name: registry
+        image: registry:2
+        ports:
+        - containerPort: 5000
+        env:
+        - name: REGISTRY_HTTP_TLS_CERTIFICATE
+          value: "{{ repertoire_certificat }}registry.crt"
+        - name: REGISTRY_HTTP_TLS_KEY
+          value: "{{ repertoire_certificat }}registry.key"
+        volumeMounts:
+        - name: registry-certs
+          mountPath: "/certs"
+          readOnly: true
+        - name: registry-data
+          mountPath: /var/lib/registry
+          subPath: registry
+      volumes:
+      - name: registry-certs
+        secret:
+          secretName: registry-cert
+      - name: registry-data
+        persistentVolumeClaim:
+          claimName: registry-volume

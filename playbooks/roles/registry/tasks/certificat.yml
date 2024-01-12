@@ -1,0 +1,64 @@
+  - name: Install paquet cryptography
+    ansible.builtin.pip:
+      name: cryptography
+  
+  - name: création répertoire certificat
+    file:
+      path: "{{ repertoire_certificat }}" 
+      state: directory
+  
+  - name: Copie clé privé
+    ansible.builtin.copy:
+      src: "{{ autorite_personnelle_cle_prive }}"
+      dest: "{{ repertoire_certificat }}autorite.key"
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: Copie certificat
+    copy:
+      src: "{{ autorite_personnelle_certificat }}"
+      dest: "{{ repertoire_certificat }}autorite.crt"
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: Génération clé rsa
+    community.crypto.openssl_privatekey:
+      path: "{{ repertoire_certificat }}registry.key"
+      type: ECC
+      curve: secp384r1
+  
+  
+  - name: Génération requete pour certificat
+    community.crypto.openssl_csr:
+      path: "{{ repertoire_certificat }}registry.csr"
+      privatekey_path: "{{ repertoire_certificat }}registry.key"
+      country_name: FR
+      state_or_province_name: Seine-Maritime
+      locality_name: Rouen
+      organization_name: M2_SSI
+      organizational_unit_name: TP_Protocoles_Réseaux
+      common_name: "registry"
+      subject_alt_name: "IP:{{ ansible_default_ipv4.address }}"
+      email_address: mon.serveur@gmail.com
+      basic_constraints_critical: true
+      basicConstraints:
+        - CA:FALSE
+      key_usage_critical: true
+      key_usage:
+        - digitalSignature
+        - Key Encipherment
+      extended_key_usage_critical: true
+      extended_key_usage:
+        - serverAuth
+
+  - name: Création certificat
+    community.crypto.x509_certificate:
+      path: "{{ repertoire_certificat }}registry.crt"
+      csr_path: "{{ repertoire_certificat }}registry.csr"
+      provider: ownca
+      ownca_path: "{{ repertoire_certificat }}autorite.crt"
+      ownca_privatekey_path: "{{ repertoire_certificat }}autorite.key"
+      ownca_not_after: +365d
+      ownca_not_before: "-1d"

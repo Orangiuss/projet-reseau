@@ -1,0 +1,4 @@
+- name: Deploiement registre local
+  hosts: mgr1
+  roles:
+    - registry
