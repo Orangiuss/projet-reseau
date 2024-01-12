@@ -35,7 +35,7 @@
     template:
       src: playbook_delete.yaml
       dest: /deploy_k8s/playbook_delete.yaml
-    
+
   # - name: Deploy volumes_mysql.yaml
   #   shell: kubectl apply -f /deploy_k8s/volumes_mysql.yaml >> volumes_mysql.log
   #   args:
