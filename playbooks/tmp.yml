@@ -2,3 +2,4 @@
   hosts: mgr1
   roles:
     - registry
+

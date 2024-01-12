@@ -1,0 +1,21 @@
+---
+# tasks file for config-certificat
+  - name: Copie certificat
+    ansible.builtin.copy:
+      src: "autorite.crt"
+      dest: "/usr/local/share/ca-certificates/registry.crt"
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+  
+  - name: Include task list in play only if the condition is true
+    include_tasks: certificat.yml
+  
+  - name: création répertoire certificat
+    file:
+      path: "/mnt/registre" 
+      state: directory
+  
+  - name: mise a jour certificats
+    shell: update-ca-certificates
+  

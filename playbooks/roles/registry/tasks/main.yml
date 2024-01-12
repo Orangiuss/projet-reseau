@@ -1,19 +1,28 @@
 ---
-  - name: Include task list in play only if the condition is true
-    include_tasks: certificat.yml
-
   - name: Install du module kubernetes.core.k8s
     pip:
       name: kubernetes
   
+  - name: création répertoire certificat
+    file:
+      path: "/mnt/registre" 
+      state: directory
+
   - name: copie fichier création de volume persistant
+    copy:
+      src: volume-persistant.yml
+      dest: ~/volume-persistant.yml
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
+
+  - name: copie fichier création de volume persistant claim
     ansible.builtin.copy:
       src: registre-volume.yml
       dest: ~/registre-volume.yml
       owner: root
       group: root
       mode: '0644'
-
 
   - name: copie fichier de déploiement du registre local
     template:
@@ -22,25 +31,39 @@
       owner: root
       group: root
       mode: u=rw,g=r,o=r
-  # kubectl create -f registre-volume.yml
+      
+# kubectl create -f registre-volume.yml
+  - name: création volume persistant
+    shell: kubectl apply -f volume-persistant.yml
 
-  # kubectl create secret tls registry-cert --cert=/root/docker/ssl/registry.crt --key=/root/docker/ssl/registry.key -n default
-  - name: creation d'un secret kubernetes
-    kubernetes.core.k8s:
-      state: present
-      definition: 
-        apiVersion: v1
-        kind: Secret
-        #type: tls       
-        metadata:
-          name: "cert-registre"
-          namespace: "default"
-        type: kubernetes.io/tls
-        data:
-          cert: "{{ lookup('file', repertoire_certificat + 'registry.crt') | b64encode | string }}"
-          key: "{{ lookup('file', repertoire_certificat + 'registry.key') | b64encode | string }}"
-          # cert: "{{ repertoire_certificat + 'registry.crt'| b64encode }}"
-          # key: "{{ repertoire_certificat + 'registry.key'| b64encode }}"
+  - name: creation volume claim 
+    shell: kubectl create -f registre-volume.yml
+
+# kubectl create secret tls registry-cert --cert=/root/docker/ssl/registry.crt --key=/root/docker/ssl/registry.key -n default
+
+  - name: creation secret ansible
+    shell: "kubectl create secret tls registry-cert --cert={{ repertoire_certificat }}registry.crt --key={{ repertoire_certificat }}registry.key -n default"
+  
+  # kubectl create -f deploiement-registry.yml
+  - name: deploiement registry
+    shell: kubectl create -f deploiement-registry.yml
+
+  # - name: creation d'un secret kubernetes
+  #   kubernetes.core.k8s:
+  #     state: present
+  #     definition: 
+  #       apiVersion: v1
+  #       kind: Secret
+  #       #type: tls       
+  #       metadata:
+  #         name: "cert-registre"
+  #         namespace: "default"
+  #       type: kubernetes.io/tls
+  #       stringData:
+  #         # cert: "{{ lookup('file', repertoire_certificat + 'registry.crt') | b64encode | string }}"
+  #         # key: "{{ lookup('file', repertoire_certificat + 'registry.key') | b64encode | string }}"
+  #         cert: "{{ repertoire_certificat + 'registry.crt' }}"
+  #         key: "{{ repertoire_certificat + 'registry.key' }}"
 
 
 # tasks file for roles/registry
@@ -135,7 +158,9 @@
 #       - name: docker-hub-sec
 
 # pour afficher infos : kubectl describe pods -n default
+# kubectl logs <nom-du-pod> -c registry -n default
 # erreur : https://stackoverflow.com/questions/59844553/kubernetes-failed-to-pull-image-server-gave-http-response-to-https-client
+# https://medium.com/geekculture/deploying-docker-registry-on-kubernetes-3319622b8f32
 # kubectl apply -f testpod.yaml
 # pour afficher les pods ainsi que leur node:
 # kubectl get pods -o wide

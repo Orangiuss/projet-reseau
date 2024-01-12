@@ -26,8 +26,8 @@
   - name: Génération clé rsa
     community.crypto.openssl_privatekey:
       path: "{{ repertoire_certificat }}registry.key"
-      type: ECC
-      curve: secp384r1
+      # type: ECC
+      # curve: secp384r1
   
   
   - name: Génération requete pour certificat

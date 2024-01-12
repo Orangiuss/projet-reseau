@@ -69,7 +69,7 @@
         config:
           limits.cpu: "2"
           limits.memory: 2GB
-        profiles: ["default"]
+        profiles: ["k8s"]
         wait_for_ipv4_addresses: true
       with_items: "{{ groups['all'] }}"
 
@@ -78,8 +78,9 @@
   connection: lxd
   roles:
     - docker
-    - config-docker
+#    - config-docker
     - kubernetes
+    - config-certificat
 
 - name: Kubernetes master roles
   hosts: mgr
@@ -114,7 +115,7 @@
   become: true
   roles:
     - jenkins
-    - deploy
+#    - deploy
 
 - name: Deploiement registre local
   hosts: mgr1

@@ -1,3 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry
+spec:
+  ports:
+  - port: 5000
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10,26 +18,27 @@ spec:
   selector:
     matchLabels:
       run: registry
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
         run: registry
     spec:
-      nodeSelector:
-        node-type: worker
       containers:
       - name: registry
         image: registry:2
         ports:
         - containerPort: 5000
+          name: registre
         env:
         - name: REGISTRY_HTTP_TLS_CERTIFICATE
-          value: "{{ repertoire_certificat }}registry.crt"
+          value: "{{ repertoire_certificat }}tls.crt"
         - name: REGISTRY_HTTP_TLS_KEY
-          value: "{{ repertoire_certificat }}registry.key"
+          value: "{{ repertoire_certificat }}tls.key"
         volumeMounts:
         - name: registry-certs
-          mountPath: "/certs"
+          mountPath: "{{ repertoire_certificat }}"
           readOnly: true
         - name: registry-data
           mountPath: /var/lib/registry
@@ -40,4 +49,5 @@ spec:
           secretName: registry-cert
       - name: registry-data
         persistentVolumeClaim:
-          claimName: registry-volume
+          claimName: registre-claim
+
