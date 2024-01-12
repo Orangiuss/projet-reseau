@@ -78,6 +78,7 @@
   connection: lxd
   become: true
   roles:
+    - docker
     - jenkins
 
 - name: Deploiement registre local

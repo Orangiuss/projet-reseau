@@ -105,3 +105,17 @@ Nous avons des services et des deployments pour Apache et MySQL.
 Nous avons les informations suivantes :
 
 Jenkins : http://10.226.132.118:8080/
+
+Nous pouvons manuellement tester pour voir si ca fonctionne bien :
+
+Nous construisons l'image Apache et MySQL :
+
+```bash
+docker build -f Dockerfilemysql -t orangius/test_mysql .
+docker images -a
+docker push orangius/test_mysql
+
+docker build -f Dockerfilephp -t orangius/test_app .
+docker images -a
+docker push orangius/test_app
+```

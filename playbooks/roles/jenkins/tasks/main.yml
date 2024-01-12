@@ -10,6 +10,7 @@
         - openjdk-17-jre
         - wget
         - gnupg
+        - git
   - name: Add Jenkins key
     shell: wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
   
@@ -23,3 +24,14 @@
     apt:
       name: jenkins
       state: present
+
+  - name: Install ansible
+    apt:
+      name: ansible
+      state: present
+
+  - name: Add jenkins user to docker group
+    shell: usermod -aG docker jenkins
+
+  - name: Restart Jenkins
+    shell: systemctl restart jenkins

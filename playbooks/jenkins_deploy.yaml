@@ -1,0 +1,8 @@
+---
+- name: Deploy Jenkins
+  hosts: mgr
+  connection: lxd
+  become: true
+  roles:
+    - docker
+    - jenkins

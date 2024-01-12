@@ -3,4 +3,4 @@
   hosts: mgr
   connection: lxd
   roles:
-    - kubernetes-master
+    - deploy

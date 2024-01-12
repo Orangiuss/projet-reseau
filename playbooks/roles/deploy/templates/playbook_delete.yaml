@@ -1,0 +1,32 @@
+---
+- name: Delete application
+  hosts: localhost
+  become: true
+  user: root
+  tasks:
+    # Création du dossier /deploy_k8s
+    - name: mkdir /deploy_k8s
+      file:
+        path: /deploy_k8s
+        state: directory
+        mode: 0755
+    # Création des volumes pour mysql
+    - name: Delete volumes_mysql.yaml
+      shell: kubectl delete -f /deploy_k8s/volumes_mysql.yaml >> volumes_mysql.log
+      args:
+        chdir: /deploy_k8s
+        creates: volumes_mysql.log
+  
+    # Déploiement de mysql
+    - name: Deploy mysql_deploy.yaml
+      shell: kubectl delete -f /deploy_k8s/mysql_deploy.yaml >> mysql_deploy.log
+      args:
+        chdir: /deploy_k8s
+        creates: mysql_deploy.log
+    
+    # Déploiement de l'application
+    - name: Deploy app_deploy.yaml
+      shell: kubectl delete -f /deploy_k8s/app_deploy.yaml >> app_deploy.log
+      args:
+        chdir: /deploy_k8s
+        creates: app_deploy.log
