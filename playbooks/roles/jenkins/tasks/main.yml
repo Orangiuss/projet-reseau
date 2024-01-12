@@ -11,6 +11,7 @@
         - wget
         - gnupg
         - git
+
   - name: Add Jenkins key
     shell: wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
   
@@ -25,13 +26,47 @@
       name: jenkins
       state: present
 
-  - name: Install ansible
-    apt:
-      name: ansible
-      state: present
-
+  # Docker pour utiliser Docker plugin
   - name: Add jenkins user to docker group
     shell: usermod -aG docker jenkins
 
   - name: Restart Jenkins
     shell: systemctl restart jenkins
+
+  # Ansible pour utiliser ansible sur jenkins avec les modules kubernetes
+  - name: Install ansible
+    apt:
+      name: ansible
+      state: present
+  
+  - name: Installer la collection Kubernetes d'Ansible Galaxy
+    ansible.builtin.shell:
+      cmd: "ansible-galaxy collection install community.kubernetes"
+
+  - name: Installer la collection Cloud d'Ansible Galaxy
+    ansible.builtin.shell:
+      cmd: "ansible-galaxy collection install cloud.common"
+
+  - name: Installer la collection Cloud d'Ansible Galaxy
+    ansible.builtin.shell:
+      cmd: "ansible-galaxy collection install kubernetes.core"
+
+  - name: Installer les packages Python pour kubernetes
+    pip:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+        - openshift
+        - pyyaml
+        - kubernetes
+
+  - name: jenkins user to sudoers
+    lineinfile:
+      path: /etc/sudoers
+      line: "jenkins ALL=(ALL) NOPASSWD:ALL"
+      validate: "visudo -cf %s"
+      state: present
+    when: ansible_user == 'root'
+
+

@@ -4,6 +4,7 @@ metadata:
   name: mysql-pv-volume
   labels:
     type: local
+  namespace: app-m2ssi
 spec:
   storageClassName: manual
   capacity:
@@ -17,6 +18,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-pv-claim
+  namespace: app-m2ssi
 spec:
   storageClassName: manual
   accessModes:
