@@ -2,7 +2,7 @@
 mgr1
 worker1
 worker2
-jenkins
+; jenkins
 
 [k8s]
 mgr1

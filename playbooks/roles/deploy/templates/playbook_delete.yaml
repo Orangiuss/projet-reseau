@@ -10,23 +10,165 @@
         path: /deploy_k8s
         state: directory
         mode: 0755
-    # Création des volumes pour mysql
-    - name: Delete volumes_mysql.yaml
-      shell: kubectl delete -f /deploy_k8s/volumes_mysql.yaml >> volumes_mysql.log
-      args:
-        chdir: /deploy_k8s
-        creates: volumes_mysql.log
+    # # Création des volumes pour mysql
+    # - name: Delete volumes_mysql.yaml
+    #   shell: kubectl delete -f /deploy_k8s/volumes_mysql.yaml >> volumes_mysql.log
+    #   args:
+    #     chdir: /deploy_k8s
+    #     creates: volumes_mysql.log
   
-    # Déploiement de mysql
-    - name: Deploy mysql_deploy.yaml
-      shell: kubectl delete -f /deploy_k8s/mysql_deploy.yaml >> mysql_deploy.log
-      args:
-        chdir: /deploy_k8s
-        creates: mysql_deploy.log
+    # # Déploiement de mysql
+    # - name: Deploy mysql_deploy.yaml
+    #   shell: kubectl delete -f /deploy_k8s/mysql_deploy.yaml >> mysql_deploy.log
+    #   args:
+    #     chdir: /deploy_k8s
+    #     creates: mysql_deploy.log
     
-    # Déploiement de l'application
-    - name: Deploy app_deploy.yaml
-      shell: kubectl delete -f /deploy_k8s/app_deploy.yaml >> app_deploy.log
-      args:
-        chdir: /deploy_k8s
-        creates: app_deploy.log
+    # # Déploiement de l'application
+    # - name: Deploy app_deploy.yaml
+    #   shell: kubectl delete -f /deploy_k8s/app_deploy.yaml >> app_deploy.log
+    #   args:
+    #     chdir: /deploy_k8s
+    #     creates: app_deploy.log
+    - name: Create MySQL Service
+      kubernetes.core.k8s:
+        state: absent
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: mysql
+            namespace: default
+          spec:
+            ports:
+            - port: 3306
+            selector:
+              app: mysql
+
+    - name: Create MySQL Deployment
+      kubernetes.core.k8s:
+        state: absent
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: mysql
+            namespace: default
+          spec:
+            replicas: 2
+            selector:
+              matchLabels:
+                app: mysql
+            strategy:
+              type: Recreate
+            template:
+              metadata:
+                labels:
+                  app: mysql
+              spec:
+                containers:
+                - image: orangius/mysql_m2ssi:latest
+                  name: mysql
+                  # env:
+                  #   - name: MYSQL_ROOT_PASSWORD
+                  #     value: password
+                  #   - name: MYSQL_DATABASE
+                  #     value: projet_m2ssi
+                  #   - name: MYSQL_USER
+                  #     value: admin
+                  #   - name: MYSQL_PASSWORD
+                  #     value: oJmijlG5DdBIY8QtqLV4OR24NYrruImPsH
+                  envFrom:
+                  - secretRef:
+                      name: mysql-secrets
+                  ports:
+                    - containerPort: 3306
+                      name: mysql
+                  volumeMounts:
+                    - name: mysql-persistent-storage
+                      mountPath: /var/lib/mysql
+                volumes:
+                  - name: mysql-persistent-storage
+                    persistentVolumeClaim:
+                      claimName: mysql-pv-claim
+
+
+    - name: Create Kubernetes Application Service
+      kubernetes.core.k8s:
+        state: absent
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: app-service
+            namespace: default
+          spec:
+            type: NodePort
+            selector:
+              app: app
+            ports:
+            - protocol: TCP
+              port: 80
+              targetPort: 80
+
+    - name: Create Kubernetes Deployment
+      kubernetes.core.k8s:
+        state: absent
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: app-deployment
+            namespace: default
+          spec:
+            replicas: 3
+            selector:
+              matchLabels:
+                app: app
+            template:
+              metadata:
+                labels:
+                  app: app
+              spec:
+                containers:
+                - name: nginx
+                  image: orangius/app_m2ssi:latest
+                  ports:
+                  - containerPort: 80 
+    
+    - name: Create PersistentVolumeClaim
+      kubernetes.core.k8s:
+        state: absent
+        definition:
+          apiVersion: v1
+          kind: PersistentVolumeClaim
+          metadata:
+            name: mysql-pv-claim
+            namespace: default
+          spec:
+            storageClassName: manual
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 20Gi
+
+    - name: Create PersistentVolume
+      kubernetes.core.k8s:
+        state: absent
+        definition:
+          apiVersion: v1
+          kind: PersistentVolume
+          metadata:
+            name: mysql-pv-volume
+            labels:
+              type: local
+            namespace: default
+          spec:
+            storageClassName: manual
+            capacity:
+              storage: 20Gi
+            accessModes:
+              - ReadWriteOnce
+            hostPath:
+              path: "/mnt/data"

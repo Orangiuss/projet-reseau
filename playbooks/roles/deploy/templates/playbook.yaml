@@ -114,15 +114,18 @@
                 containers:
                 - image: orangius/mysql_m2ssi:latest
                   name: mysql
-                  env:
-                    - name: MYSQL_ROOT_PASSWORD
-                      value: password
-                    - name: MYSQL_DATABASE
-                      value: projet_m2ssi
-                    - name: MYSQL_USER
-                      value: admin
-                    - name: MYSQL_PASSWORD
-                      value: oJmijlG5DdBIY8QtqLV4OR24NYrruImPsH
+                  # env:
+                  #   - name: MYSQL_ROOT_PASSWORD
+                  #     value: password
+                  #   - name: MYSQL_DATABASE
+                  #     value: projet_m2ssi
+                  #   - name: MYSQL_USER
+                  #     value: admin
+                  #   - name: MYSQL_PASSWORD
+                  #     value: oJmijlG5DdBIY8QtqLV4OR24NYrruImPsH
+                  envFrom:
+                  - secretRef:
+                      name: mysql-secrets
                   ports:
                     - containerPort: 3306
                       name: mysql

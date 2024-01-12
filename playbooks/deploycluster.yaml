@@ -73,13 +73,20 @@
       shell: kubectl label node "{{ item }}" node-role.kubernetes.io/worker=worker
       with_items: "{{ groups['worker'] }}"
 
+# - name: Deploy Jenkins
+#   hosts: jenkins
+#   connection: lxd
+#   become: true
+#   roles:
+#     - docker
+#     - jenkins
 - name: Deploy Jenkins
-  hosts: jenkins
+  hosts: mgr
   connection: lxd
   become: true
   roles:
-    - docker
     - jenkins
+    - deploy
 
 - name: Deploiement registre local
   hosts: mgr1
