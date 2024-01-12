@@ -2,42 +2,9 @@
 - name: Deploy application
   hosts: localhost
   become: true
+  gather_facts: false
   user: root
   tasks:
-    # Création du dossier /deploy_k8s
-    - name: mkdir /deploy_k8s
-      file:
-        path: /deploy_k8s
-        state: directory
-        mode: 0755
-    # Création des volumes pour mysql
-    # - name: Deploy volumes_mysql.yaml
-    #   shell: kubectl apply -f /deploy_k8s/volumes_mysql.yaml >> volumes_mysql.log
-    #   args:
-    #     chdir: /deploy_k8s
-    #     creates: volumes_mysql.log
-  
-    # # Déploiement de mysql
-    # - name: Deploy mysql_deploy.yaml
-    #   shell: kubectl apply -f /deploy_k8s/mysql_deploy.yaml >> mysql_deploy.log
-    #   args:
-    #     chdir: /deploy_k8s
-    #     creates: mysql_deploy.log
-    
-    # # Déploiement de l'application
-    # - name: Deploy app_deploy.yaml
-    #   shell: kubectl apply -f /deploy_k8s/app_deploy.yaml >> app_deploy.log
-    #   args:
-    #     chdir: /deploy_k8s
-    #     creates: app_deploy.log
-    
-    # - name: Create a Kubernetes namespace
-    #   kubernetes.core.k8s:
-    #     name: app-m2ssi
-    #     api_version: v1
-    #     kind: Namespace
-    #     state: present
-    
     - name: Create PersistentVolume
       kubernetes.core.k8s:
         state: present
@@ -100,7 +67,7 @@
             name: mysql
             namespace: default
           spec:
-            replicas: 2
+            replicas: 1
             selector:
               matchLabels:
                 app: mysql

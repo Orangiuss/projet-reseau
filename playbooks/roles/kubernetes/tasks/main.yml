@@ -6,6 +6,7 @@
 
   - name: reboot and wait for reboot to complete
     reboot:
+      reboot_timeout: 60
 
   - name: disable SWAP (Kubeadm requirement)
     shell: |

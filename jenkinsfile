@@ -1,6 +1,5 @@
 pipeline {
     environment {
-    dockerimagename = "monserveurphp"
     dockerImage1 = ""
     dockerImage2 = ""
     registryCredential = 'dockerhub'

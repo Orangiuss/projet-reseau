@@ -60,3 +60,13 @@
         - openshift
         - pyyaml
         - kubernetes
+
+  - name: jenkins user to sudoers
+    lineinfile:
+      path: /etc/sudoers
+      line: "jenkins ALL=(ALL) NOPASSWD:ALL"
+      validate: "visudo -cf %s"
+      state: present
+    when: ansible_user == 'root'
+
+
