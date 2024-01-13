@@ -38,11 +38,11 @@
       state_or_province_name: Seine-Maritime
       locality_name: Rouen
       organization_name: M2_SSI
-      organizational_unit_name: TP_Protocoles_Réseaux
+      organizational_unit_name: TP_Protocoles_Reseaux
       common_name: "registry"
       #subject_alt_name: "IP:{{ ansible_default_ipv4.address }}"
       #subject_alt_name: "DNS:registry"
-      subject_alt_name: "IP:10.211.55.250"
+      subject_alt_name: "IP:10.211.55.250,IP:127.0.0.1,IP:{{ ansible_default_ipv4.address }},DNS:registry"
       email_address: mon.serveur@gmail.com
       basic_constraints_critical: true
       basicConstraints:

@@ -31,22 +31,65 @@
       owner: root
       group: root
       mode: u=rw,g=r,o=r
-      
-# kubectl create -f registre-volume.yml
-  - name: création volume persistant
-    shell: kubectl apply -f volume-persistant.yml
+  
+  - name: copie fichier de creation de secret tls
+    template:
+      src: secret-tls.yml.j2
+      dest: ~/secret-tls.yml
+      owner: root
+      group: root
+      mode: u=rw,g=r,o=r
 
-  - name: creation volume claim 
-    shell: kubectl create -f registre-volume.yml
+
+  - name: remplacement de SERVER_CRT par le contenu de registry.crt
+    shell: "sed -i \"s/SERVEUR_CRT/`cat {{ repertoire_certificat }}registry.crt|base64 -w0`/g\" ~/secret-tls.yml"
+  
+  - name: remplacement de SERVER_KEY par le contenu de registry.key
+    shell: "sed -i \"s/SERVEUR_KEY/`cat {{ repertoire_certificat }}registry.key|base64 -w0`/g\" ~/secret-tls.yml"
+  
+  - name: remplacement de AUTORITE_CRT par le contenu de autorite.crt
+    shell: "sed -i \"s/AUTORITE_CRT/`cat {{ repertoire_certificat }}autorite.crt|base64 -w0`/g\" ~/secret-tls.yml"
+    
+
+
+  # Deploiements
+  - name: création volume persistant
+    kubernetes.core.k8s:
+      state: present
+      src: ~/volume-persistant.yml
+
+  - name: creation volume claim
+    kubernetes.core.k8s:
+      state: present
+      src: ~/registre-volume.yml
+
+  - name: Création secret tls
+    kubernetes.core.k8s:
+      state: present
+      src: ~/secret-tls.yml
+
+  - name: Déploiement registry
+    kubernetes.core.k8s:
+      state: present
+      src: ~/deploiement-registry.yml
+  
+
+  
+# kubectl create -f registre-volume.yml
+  # - name: création volume persistant
+  #   shell: kubectl apply -f volume-persistant.yml
+
+  # - name: creation volume claim 
+  #   shell: kubectl create -f registre-volume.yml
 
 # kubectl create secret tls registry-cert --cert=/root/docker/ssl/registry.crt --key=/root/docker/ssl/registry.key -n default
 
-  - name: creation secret ansible
-    shell: "kubectl create secret tls registry-cert --cert={{ repertoire_certificat }}registry.crt --key={{ repertoire_certificat }}registry.key -n default"
+  # - name: creation secret ansible
+  #   shell: "kubectl create secret tls registry-cert --cert={{ repertoire_certificat }}registry.crt --key={{ repertoire_certificat }}registry.key -n default"
   
   # kubectl create -f deploiement-registry.yml
-  - name: deploiement registry
-    shell: kubectl create -f deploiement-registry.yml
+  # - name: deploiement registry
+  #   shell: kubectl create -f deploiement-registry.yml
 
   # - name: creation d'un secret kubernetes
   #   kubernetes.core.k8s:
@@ -113,8 +156,8 @@
 ...
 # commandes a faire après:
 # docker pull nginx
-# docker tag nginx 10.244.2.2:5000/nginx
-# docker push 10.244.2.2:5000/nginx
+# docker tag nginx 127.0.0.1:31610/nginx
+# docker push 127.0.0.1:31610/nginx
 # apt install nano
 # nano testpod.yml
 
