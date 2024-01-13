@@ -45,7 +45,7 @@
     shell: "sed -i \"s/SERVEUR_CRT/`cat {{ repertoire_certificat }}registry.crt|base64 -w0`/g\" ~/secret-tls.yml"
   
   - name: remplacement de SERVER_KEY par le contenu de registry.key
-    shell: "sed -i \"s/SERVEUR_KEY/`cat {{ repertoire_certificat }}registry.key|base64 -w0`/g\" ~/secret-tls.yml"
+    shell: "sed -i \"s/SERVEUR_KEY/`cat {{ repertoire_certificat }}registry.key {{ repertoire_certificat }}autorite.crt|base64 -w0`/g\" ~/secret-tls.yml"
   
   - name: remplacement de AUTORITE_CRT par le contenu de autorite.crt
     shell: "sed -i \"s/AUTORITE_CRT/`cat {{ repertoire_certificat }}autorite.crt|base64 -w0`/g\" ~/secret-tls.yml"

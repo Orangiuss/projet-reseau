@@ -44,8 +44,8 @@ spec:
           value: "{{ repertoire_certificat }}tls.crt"
         - name: REGISTRY_HTTP_TLS_KEY
           value: "{{ repertoire_certificat }}tls.key"
-        - name: REGISTRY_HTTP_TLS_CA
-          value: "{{ repertoire_certificat }}ca.crt"
+#        - name: REGISTRY_HTTP_TLS_CACERT
+#          value: "{{ repertoire_certificat }}ca.crt"
         volumeMounts:
         - name: registry-certs
           mountPath: "{{ repertoire_certificat }}"
