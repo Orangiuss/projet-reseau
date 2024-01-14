@@ -42,10 +42,10 @@
 
 
   - name: remplacement de SERVER_CRT par le contenu de registry.crt
-    shell: "sed -i \"s/SERVEUR_CRT/`cat {{ repertoire_certificat }}registry.crt|base64 -w0`/g\" ~/secret-tls.yml"
+    shell: "sed -i \"s/SERVEUR_CRT/`cat {{ repertoire_certificat }}registry.crt {{ repertoire_certificat }}autorite.crt|base64 -w0`/g\" ~/secret-tls.yml"
   
   - name: remplacement de SERVER_KEY par le contenu de registry.key
-    shell: "sed -i \"s/SERVEUR_KEY/`cat {{ repertoire_certificat }}registry.key {{ repertoire_certificat }}autorite.crt|base64 -w0`/g\" ~/secret-tls.yml"
+    shell: "sed -i \"s/SERVEUR_KEY/`cat {{ repertoire_certificat }}registry.key|base64 -w0`/g\" ~/secret-tls.yml"
   
   - name: remplacement de AUTORITE_CRT par le contenu de autorite.crt
     shell: "sed -i \"s/AUTORITE_CRT/`cat {{ repertoire_certificat }}autorite.crt|base64 -w0`/g\" ~/secret-tls.yml"
@@ -204,6 +204,7 @@
 # kubectl logs <nom-du-pod> -c registry -n default
 # erreur : https://stackoverflow.com/questions/59844553/kubernetes-failed-to-pull-image-server-gave-http-response-to-https-client
 # https://medium.com/geekculture/deploying-docker-registry-on-kubernetes-3319622b8f32
+# https://stackoverflow.com/questions/58476218/unable-to-push-to-private-docker-registry-via-tls
 # kubectl apply -f testpod.yaml
 # pour afficher les pods ainsi que leur node:
 # kubectl get pods -o wide
