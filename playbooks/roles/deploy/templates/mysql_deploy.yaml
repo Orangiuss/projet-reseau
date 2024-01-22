@@ -27,7 +27,8 @@ spec:
         app: mysql
     spec:
       containers:
-      - image: orangius/mysql_m2ssi:latest
+      #- image: orangius/mysql_m2ssi:latest
+      - image: 10.164.246.120:31200/mysql_m2ssi:latest
         name: mysql
         env:
           # Use secret in real usage

@@ -4,7 +4,7 @@ metadata:
   name: registry-service
   namespace: default
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     run: registry
   ports:
@@ -12,7 +12,7 @@ spec:
       protocol: TCP
       port: 5000
       targetPort: 5000
-  loadBalancerIP: 10.211.55.250
+      nodePort: 31200
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -41,14 +41,12 @@ spec:
           name: registre
         env:
         - name: REGISTRY_HTTP_TLS_CERTIFICATE
-          value: "{{ repertoire_certificat }}tls.crt"
+          value: "/certs/tls.crt"
         - name: REGISTRY_HTTP_TLS_KEY
-          value: "{{ repertoire_certificat }}tls.key"
-#        - name: REGISTRY_HTTP_TLS_CACERT
-#          value: "{{ repertoire_certificat }}ca.crt"
+          value: "/certs/tls.key"
         volumeMounts:
         - name: registry-certs
-          mountPath: "{{ repertoire_certificat }}"
+          mountPath: "/certs"
           readOnly: true
         - name: registry-data
           mountPath: /var/lib/registry

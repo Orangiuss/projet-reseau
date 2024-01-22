@@ -156,10 +156,17 @@
 ...
 # commandes a faire après:
 # docker pull nginx
-# docker tag nginx 127.0.0.1:31610/nginx
-# docker push 127.0.0.1:31610/nginx
+# docker tag nginx 127.0.0.1:31200/nginx
+# docker push 127.0.0.1:31200/nginx
 # apt install nano
 # nano testpod.yml
+# ------
+# docker pull orangius/app_m2ssi:latest
+# docker tag orangius/app_m2ssi:latest 127.0.0.1:31200/nginx:latest
+# docker push 127.0.0.1:31200/nginx:latest
+# docker pull orangius/mysql_m2ssi:latest
+# docker tag orangius/app_m2ssi:latest 127.0.0.1:31200/mysql_m2ssi:latest
+# docker push 127.0.0.1:31200/mysql_m2ssi:latest
 
 # fonctionne
 # apiVersion: v1

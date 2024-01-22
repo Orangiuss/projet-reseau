@@ -68,7 +68,7 @@
           alias: ubuntu/focal/amd64
         config:
           limits.cpu: "2"
-          limits.memory: 2GB
+          limits.memory: 3GB
         profiles: ["k8s"]
         wait_for_ipv4_addresses: true
       with_items: "{{ groups['all'] }}"
